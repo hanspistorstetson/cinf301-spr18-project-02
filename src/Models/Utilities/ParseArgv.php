@@ -14,7 +14,13 @@ class ParseArgv
 
     public function parse($input) {
         $toBeParsed = implode(" ", array_slice($input, 1));
-        preg_match_all("/((\S* (?!-)\S*)|(\S*=\S*)|(\S\S))/", $toBeParsed, $matches);
+        preg_match_all("/((\S{2,} (?!-)\S+)|(\S{2,}=\S+)|(\S[^\s-]))/", $toBeParsed, $matches);
+        $not_matched = array_filter(explode(" ", preg_replace("/((\S{2,} (?!-)\S+)|(\S{3,}=\S+)|(\S[^\s-]))/", '', $toBeParsed)));
+        if (sizeof($not_matched)) {
+            echo "Invalid characters " . implode(" ", $not_matched) . "\n";
+            exit(-1);
+        }
+
         // $matches[2] = single dash
         // $matches[3] = double dash
         // $matches[4] = flags
