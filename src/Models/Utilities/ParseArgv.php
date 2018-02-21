@@ -14,7 +14,7 @@ class ParseArgv
 
     public function parse($input) {
         $toBeParsed = implode(" ", array_slice($input, 1));
-        preg_match_all("/((\S{2,} (?!-)\S+)|(\S{2,}=\S+)|(\S[^\s-]))/", $toBeParsed, $matches);
+        preg_match_all("/((\S{2,} (?!-)\S+)|(\S{3,}=\S+)|(\S[^\s-]))/", $toBeParsed, $matches);
         $not_matched = array_filter(explode(" ", preg_replace("/((\S{2,} (?!-)\S+)|(\S{3,}=\S+)|(\S[^\s-]))/", '', $toBeParsed)));
         if (sizeof($not_matched)) {
             echo "Invalid characters " . implode(" ", $not_matched) . "\n";
@@ -24,9 +24,9 @@ class ParseArgv
         // $matches[2] = single dash
         // $matches[3] = double dash
         // $matches[4] = flags
-        $this->parseFlags($matches);
-        $this->parseSingle($matches);
-        $this->parseDouble($matches);
+        $this->parseSingle($matches[2]);
+        $this->parseDouble($matches[3]);
+        $this->parseFlags($matches[4]);
     }
 
     public function print() {
@@ -53,14 +53,14 @@ class ParseArgv
     }
 
     private function parseFlags($matches) {
-        $removed_null = array_values(array_filter($matches[4]));
+        $removed_null = array_values(array_filter($matches));
         for ($i = 0; $i < sizeof($removed_null); $i++) {
             array_push($this->argsParsed["FLAGS"], substr($removed_null[$i], 1));
         }
     }
 
     private function parseSingle($matches) {
-        $removed_null = array_values(array_filter($matches[2]));
+        $removed_null = array_values(array_filter($matches));
         for ($i = 0; $i < sizeof($removed_null); $i++) {
             $temp = explode(" ", $removed_null[$i]);
             for ($j = 0; $j < sizeof($temp); $j+=2) {
@@ -72,7 +72,7 @@ class ParseArgv
     }
 
     private function parseDouble($matches) {
-        $removed_null = array_values(array_filter($matches[3]));
+        $removed_null = array_values(array_filter($matches));
         for ($i = 0; $i < sizeof($removed_null); $i++) {
             $temp = explode("=", $removed_null[$i]);
             for ($j = 0; $j < sizeof($temp); $j++) {
