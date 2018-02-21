@@ -8,7 +8,11 @@ class ParseArgv
     private $argsParsed;
     public function __construct($input)
     {
-        $this->argsParsed = array('FLAGS' => array(), 'SINGLE' => array(), 'DOUBLE' => array());;
+        $this->argsParsed = array('FLAGS' => array(), 'SINGLE' => array(), 'DOUBLE' => array());
+        $this->parse($input);
+    }
+
+    public function parse($input) {
         $toBeParsed = implode(" ", array_slice($input, 1));
         preg_match_all("/((\S* (?!-)\S*)|(\S*=\S*)|(\S\S))/", $toBeParsed, $matches);
         // $matches[2] = single dash
@@ -17,8 +21,6 @@ class ParseArgv
         $this->parseFlags($matches);
         $this->parseSingle($matches);
         $this->parseDouble($matches);
-        //echo(implode(" ", $matches[2]));
-
     }
 
     private function parseFlags($matches) {
