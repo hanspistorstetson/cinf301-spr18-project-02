@@ -23,6 +23,29 @@ class ParseArgv
         $this->parseDouble($matches);
     }
 
+    public function print() {
+        foreach($this->argsParsed as $key => $val) {
+            echo $key . "\n";
+            foreach($val as $ikey => $ival) {
+                if ($key == 'FLAGS') {
+                    echo $ival . "\n";
+                } else {
+                    echo $ikey . " => ";
+                    $explode_comma = explode(",", $ival);
+                    if (sizeof($explode_comma) == 1) {
+                        echo $ival . " (". sizeof($ival) . " argument)\n";
+                    } else {
+                        for ($i = 0; $i < sizeof($explode_comma)-1; $i++) {
+                            echo "[" . $i . "] " . $explode_comma[$i] . ", ";
+                        }
+                        echo "[" . (sizeof($explode_comma)-1) . "] " . $explode_comma[sizeof($explode_comma)-1] . " (" . sizeof($explode_comma) . " arguments)\n";
+                    }
+                }
+            }
+            echo "\n";
+        }
+    }
+
     private function parseFlags($matches) {
         $removed_null = array_values(array_filter($matches[4]));
         for ($i = 0; $i < sizeof($removed_null); $i++) {
